@@ -25,6 +25,6 @@ node {
 
         sh """
             helm upgrade --install \
-                --set image.repository=${imageName},image.tag=${tag} ${appName} 
+                --set image.repository=${imageName},image.tag=${tag} ${appName} applications/${appName}/helm-chart/
         """
 }
