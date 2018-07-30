@@ -13,7 +13,9 @@ node {
 
     stage "Build"
     
-        sh "docker build -t ${imageName} ."
+
+        sh "docker build -t ${imageName} -f applications/${appName}/Dockerfile applications/${appName}"
+
     
     stage "Push"
 
@@ -21,7 +23,7 @@ node {
 
     stage "Deploy"
 
-   sh """
+        sh """
             helm upgrade --install \
                 --set image.repository=${imageName},image.tag=${tag} ${appName} 
         """
