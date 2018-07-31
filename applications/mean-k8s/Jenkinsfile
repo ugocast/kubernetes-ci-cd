@@ -23,6 +23,8 @@ node {
 
     stage "Deploy"
 
+        sh """helm init --force-upgrade"""
+
         sh """
             helm upgrade --install \
                 --set-string image.repository=${registryHost}${appName},image.tag=${tag} ${appName} applications/${appName}/helm-chart/
