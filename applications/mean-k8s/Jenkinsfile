@@ -23,6 +23,8 @@ node {
 
     stage "Deploy"
 
+        sh """ helm init --client-only --force-upgrade"""
+
         sh """helm version"""
 
         sh """
