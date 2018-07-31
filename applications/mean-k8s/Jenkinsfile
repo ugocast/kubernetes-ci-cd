@@ -23,7 +23,7 @@ node {
 
     stage "Deploy"
 
-        sh """helm init --force-upgrade"""
+        sh """helm version"""
 
         sh """
             helm upgrade --install \
