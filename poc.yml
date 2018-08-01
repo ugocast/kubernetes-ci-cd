@@ -1,0 +1,35 @@
+parts:
+
+  - name: POC
+    intro: Setup Kubernete ,local Registry, Jenkins. init Helm client.
+    steps:
+
+      - cap: Start up the Kubernetes cluster with Minikube.
+        com: minikube start --kubernetes-version v1.9.4
+
+      - cap: Enable the Minikube add-ons Heapster and Ingress.
+        com: minikube addons enable heapster; minikube addons enable ingress
+
+      - cap: Wait 20 seconds, and then view the Minikube Dashboard, a web UI for managing deployments.
+        com: sleep 20; minikube service kubernetes-dashboard --namespace kube-system
+
+      - cap: Set up the cluster registry by applying a .yml manifest file.
+        com: kubectl apply -f manifests/registry.yml
+
+      - cap: Wait for the registry to finish deploying. Note that this may take several minutes.
+        com: kubectl rollout status deployments/registry
+
+      - cap: View the registry user interface in a web browser.
+        com: minikube service registry-ui
+
+      - cap: We’ve built the image, but before we can push it to the registry, we need to set up a temporary proxy. By default the Docker client can only push to HTTP (not HTTPS) via localhost. To work around this, we’ll set up a container that listens on 127.0.0.1:30400 and forwards to our cluster.
+        com: docker stop socat-registry; docker rm socat-registry; docker run -d -e "REGIP=`minikube ip`" --name socat-registry -p 30400:5000 chadmoon/socat:latest bash -c "socat TCP4-LISTEN:5000,fork,reuseaddr TCP4:`minikube ip`:30400"
+
+      - cap: Install Jenkins for automated CI/CD pipeline (user:admin, pass:password). It will take the pod a minute or two to roll out.
+        com: kubectl apply -f manifests/jenkins.yml; kubectl rollout status deployment/jenkins
+
+      - cap: Open the Jenkins UI in a web browser.
+        com: minikube service jenkins
+      
+      - cap: Init Helm.
+        com: helm init --client-only

@@ -55,7 +55,7 @@ spec:
         tier: jenkins
     spec:
       containers:
-      - image: chadmoon/jenkins-docker-kubectl:latest
+      - image: eldada-docker-examples.bintray.io/jenkins:lts-k8s
         name: jenkins
         securityContext:
           privileged: true
